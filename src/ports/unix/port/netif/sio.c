@@ -68,7 +68,11 @@
 #endif
 
 #ifndef LWIP_HAVE_SLIPIF
+#ifndef __APPLE__
 #define LWIP_HAVE_SLIPIF 1
+#else
+#define LWIP_HAVE_SLIPIF 0
+#endif
 #endif
 
 /** Maximum packet size that is received by this netif */
@@ -114,6 +118,14 @@ static int run_command(const char *command) {
 
   return res;
 }
+
+// static int fork_() {
+//   int res = -1;
+// #ifndef __APPLE__
+//   res = fork();
+// #endif
+//   return res;
+// }
 
 #if ! (PPP_SUPPORT || LWIP_HAVE_SLIPIF)
 /* --private-functions----------------------------------------------------------------- */
@@ -452,6 +464,7 @@ sio_fd_t sio_open(u8_t devnum)
 		    siostate->fd, ptsname(siostate->fd)));
 	    /* fork for slattach */
 	    childpid = fork();
+		// childpid = fork_();
 	    if(childpid < 0) {
 		perror("fork");
 		exit (1);
