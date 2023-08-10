@@ -69,9 +69,9 @@
 
 #ifndef LWIP_HAVE_SLIPIF
 #ifndef __APPLE__
-#define LWIP_HAVE_SLIPIF 1
-#else
 #define LWIP_HAVE_SLIPIF 0
+#else
+#define LWIP_HAVE_SLIPIF 1
 #endif
 #endif
 
