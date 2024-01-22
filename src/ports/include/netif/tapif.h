@@ -29,61 +29,7 @@
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
-#ifndef LWIP_ARCH_CC_H
-#define LWIP_ARCH_CC_H
 
-/* see https://sourceforge.net/p/predef/wiki/OperatingSystems/ */
-#if defined __ANDROID__
-#define LWIP_UNIX_ANDROID
-#elif defined __linux__
-#define LWIP_UNIX_LINUX
-#elif defined __APPLE__
-#define LWIP_UNIX_MACH
-#elif defined __OpenBSD__
-#define LWIP_UNIX_OPENBSD
-#elif defined __FreeBSD_kernel__ && __GLIBC__
-#define LWIP_UNIX_KFREEBSD
-#elif defined __CYGWIN__
-#define LWIP_UNIX_CYGWIN
-#elif defined __GNU__
-#define LWIP_UNIX_HURD
+#if !defined(_WIN32) && !defined(_WIN64)
+#include "../../unix/include/netif/tapif.h"
 #endif
-
-#define LWIP_TIMEVAL_PRIVATE 0
-#include <sys/time.h>
-
-#define LWIP_ERRNO_INCLUDE <errno.h>
-
-#if defined(LWIP_UNIX_LINUX) || defined(LWIP_UNIX_HURD) || defined(LWIP_UNIX_KFREEBSD)
-#define LWIP_ERRNO_STDINCLUDE	1
-#endif
-
-extern unsigned int lwip_port_rand(void);
-#define LWIP_RAND() (lwip_port_rand())
-
-/* different handling for unit test, normally not needed */
-#ifdef LWIP_NOASSERT_ON_ERROR
-#define LWIP_ERROR(message, expression, handler) do { if (!(expression)) { \
-  handler;}} while(0)
-#endif
-
-#if defined(LWIP_UNIX_ANDROID) && defined(FD_SET)
-typedef __kernel_fd_set fd_set;
-#endif
-
-#if defined(LWIP_UNIX_MACH)
-/* sys/types.h and signal.h bring in Darwin byte order macros. pull the
-   header here and disable LwIP's version so that apps still can get
-   the macros via LwIP headers and use system headers */
-#include <sys/types.h>
-#define LWIP_DONT_PROVIDE_BYTEORDER_FUNCTIONS
-#endif
-
-struct sio_status_s;
-typedef struct sio_status_s sio_status_t;
-#define sio_fd_t sio_status_t*
-#define __sio_fd_t_defined
-
-typedef unsigned int sys_prot_t;
-
-#endif /* LWIP_ARCH_CC_H */
